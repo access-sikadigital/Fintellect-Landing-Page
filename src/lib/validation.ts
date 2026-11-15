@@ -2,8 +2,8 @@
  * Contact-detail rules shared by the quiz (browser) and /api/lead (server),
  * so both sides accept and reject exactly the same input.
  *
- *  - Name:  letters only (any language), plus spaces, hyphens and apostrophes
- *           for names like "Mary-Jane O'Brien". No digits or symbols.
+ *  - Name:  first AND last name required. Letters only (any language), plus spaces, hyphens
+ *           and apostrophes for names like "Mary-Jane O'Brien". No digits or symbols.
  *  - Phone: Australian mobiles only. 04xx xxx xxx, +61 4xx xxx xxx or 61 4xx xxx xxx.
  *  - Email: a real address shape (local@domain.tld), with a "did you mean" for common typos.
  */
@@ -25,8 +25,13 @@ export function checkName(raw: string): Check {
   if (!v) return { ok: false, error: "Please enter your name." };
   if (/[^\p{L}\p{M}\s'-]/u.test(v)) return { ok: false, error: "Please use letters only in your name." };
   if (!/^\p{L}/u.test(v) || /['-]{2,}|[\s'-]$/u.test(v)) return { ok: false, error: "Please check your name." };
-  if (v.replace(/[^\p{L}]/gu, "").length < 2) return { ok: false, error: "Please enter your full name." };
   if (v.length > 60) return { ok: false, error: "That name is a little long. Please shorten it." };
+  // First AND last name, each with at least 2 letters (so "John" or "John S" isn't enough)
+  const parts = v.split(" ");
+  const letters = (s: string) => s.replace(/[^\p{L}]/gu, "").length;
+  if (parts.length < 2) return { ok: false, error: "Please enter your first and last name." };
+  if (letters(parts[0]) < 2) return { ok: false, error: "Please enter your full first name." };
+  if (letters(parts.slice(1).join("")) < 2) return { ok: false, error: "Please enter your full last name." };
   return { ok: true, value: v };
 }
 

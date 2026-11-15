@@ -311,7 +311,7 @@ export function Quiz() {
                   <div className="mt-5 flex flex-col gap-3.5">
                     <Field
                       id="q-name"
-                      label="Full name"
+                      label="First and last name"
                       autoComplete="name"
                       autoCapitalize="words"
                       spellCheck={false}
