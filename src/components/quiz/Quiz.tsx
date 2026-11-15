@@ -5,9 +5,21 @@ import clsx from "clsx";
 import { NO_PROPERTY, quizSteps, quizTrust, site, type ChoiceStep } from "@/lib/content";
 import { attribution, newEventId, track, trackCustom } from "@/lib/track";
 import { ArrowIcon, BrandIcon, CheckIcon } from "@/components/ui/primitives";
+import {
+  checkAuMobile,
+  checkEmail,
+  checkName,
+  formatAuMobile,
+  sanitiseEmail,
+  sanitiseName,
+  sanitisePhone,
+  suggestEmail,
+} from "@/lib/validation";
 
 type Answers = Record<string, string>;
 type Contact = { name: string; phone: string; email: string };
+type Key = keyof Contact;
+const KEYS: Key[] = ["name", "phone", "email"];
 type Status = "quiz" | "sending" | "done";
 
 const STORE_KEY = "ft-ato-quiz";
@@ -21,13 +33,6 @@ const STAGES = [
 ];
 const ADVANCE_MS = 280;
 
-const isPhone = (v: string) => {
-  let d = v.replace(/\D/g, "");
-  if (d.startsWith("61")) d = `0${d.slice(2)}`;
-  return /^0[2-478]\d{8}$/.test(d);
-};
-const isEmail = (v: string) => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v.trim());
-
 /**
  * The lead quiz. One question per screen; choosing an answer moves on by itself.
  * Steps slide in the direction of travel and the card eases to each step's height.
@@ -40,7 +45,7 @@ export function Quiz() {
   const [status, setStatus] = useState<Status>("quiz");
   const [picked, setPicked] = useState<string | null>(null);
   const [contact, setContact] = useState<Contact>({ name: "", phone: "", email: "" });
-  const [touched, setTouched] = useState(false);
+  const [touched, setTouched] = useState<Record<Key, boolean>>({ name: false, phone: false, email: false });
   const [error, setError] = useState<string | null>(null);
   const lock = useRef(false);
   const started = useRef(false);
@@ -139,21 +144,26 @@ export function Quiz() {
     }, ADVANCE_MS);
   };
 
-  const errors = {
-    name: contact.name.trim().length < 2 ? "Please enter your name." : null,
-    phone: !isPhone(contact.phone) ? "Please enter an Australian phone number, e.g. 0412 345 678." : null,
-    email: !isEmail(contact.email) ? "Please enter a valid email address." : null,
+  // Same rules as the server (src/lib/validation.ts). A field's error shows once the visitor has left it.
+  const checks = { name: checkName(contact.name), phone: checkAuMobile(contact.phone), email: checkEmail(contact.email) };
+  const errorOf = (k: Key) => {
+    const c = checks[k];
+    return touched[k] && !c.ok ? c.error : null;
   };
+  const emailSuggestion = checks.email.ok ? suggestEmail(contact.email) : null;
+  const touch = (k: Key) => setTouched((t) => (t[k] ? t : { ...t, [k]: true }));
 
   const submit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setTouched(true);
+    setTouched({ name: true, phone: true, email: true });
     setError(null);
-    if (errors.name || errors.phone || errors.email) {
-      const first = (["name", "phone", "email"] as const).find((k) => errors[k]);
-      document.getElementById(`q-${first}`)?.focus();
+    const { name, phone, email } = checks;
+    if (!name.ok || !phone.ok || !email.ok) {
+      const firstBad = KEYS.find((k) => !checks[k].ok);
+      document.getElementById(`q-${firstBad}`)?.focus();
       return;
     }
+    const clean = { name: name.value, phone: phone.value, email: email.value };
     const honeypot = (new FormData(e.currentTarget).get("company") as string) || "";
     const eventId = newEventId();
     setStatus("sending");
@@ -161,8 +171,14 @@ export function Quiz() {
       const res = await fetch("/api/lead", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ answers, contact, eventId, attribution: attribution(), company: honeypot }),
+        body: JSON.stringify({ answers, contact: clean, eventId, attribution: attribution(), company: honeypot }),
       });
+      if (res.status === 422) {
+        const data = (await res.json().catch(() => ({}))) as { error?: string };
+        setStatus("quiz");
+        setError(data.error || "Please check your details and try again.");
+        return;
+      }
       if (!res.ok) throw new Error(String(res.status));
       track("Lead", { content_name: "ATO debt quiz", content_category: answers.atoDebt }, eventId);
       try {
@@ -293,16 +309,37 @@ export function Quiz() {
                   </h2>
                   {step.hint && <p className="mt-1.5 text-[0.92rem] text-ink-mute">{step.hint}</p>}
                   <div className="mt-5 flex flex-col gap-3.5">
-                    <Field id="q-name" label="Your name" autoComplete="name" value={contact.name} onChange={(v) => setContact({ ...contact, name: v })} error={touched ? errors.name : null} />
+                    <Field
+                      id="q-name"
+                      label="Full name"
+                      autoComplete="name"
+                      autoCapitalize="words"
+                      spellCheck={false}
+                      maxLength={60}
+                      placeholder="e.g. Sarah Mitchell"
+                      value={contact.name}
+                      onChange={(v) => setContact((c) => ({ ...c, name: sanitiseName(v) }))}
+                      onBlur={() => touch("name")}
+                      error={errorOf("name")}
+                      valid={checks.name.ok}
+                    />
                     <Field
                       id="q-phone"
-                      label="Mobile or phone"
+                      label="Australian mobile"
                       type="tel"
                       inputMode="tel"
                       autoComplete="tel"
+                      maxLength={18}
+                      placeholder="04XX XXX XXX"
                       value={contact.phone}
-                      onChange={(v) => setContact({ ...contact, phone: v })}
-                      error={touched ? errors.phone : null}
+                      onChange={(v) => setContact((c) => ({ ...c, phone: sanitisePhone(v) }))}
+                      onBlur={() => {
+                        touch("phone");
+                        const p = checks.phone;
+                        if (p.ok) setContact((c) => ({ ...c, phone: formatAuMobile(p.value) }));
+                      }}
+                      error={errorOf("phone")}
+                      valid={checks.phone.ok}
                     />
                     <Field
                       id="q-email"
@@ -310,10 +347,30 @@ export function Quiz() {
                       type="email"
                       inputMode="email"
                       autoComplete="email"
+                      autoCapitalize="none"
+                      spellCheck={false}
+                      maxLength={254}
+                      placeholder="name@example.com"
                       value={contact.email}
-                      onChange={(v) => setContact({ ...contact, email: v })}
-                      error={touched ? errors.email : null}
-                    />
+                      onChange={(v) => setContact((c) => ({ ...c, email: sanitiseEmail(v) }))}
+                      onBlur={() => touch("email")}
+                      error={errorOf("email")}
+                      valid={checks.email.ok && !emailSuggestion}
+                    >
+                      {touched.email && emailSuggestion && (
+                        <p className="mt-1.5 text-[0.85rem] text-ink-soft">
+                          Did you mean{" "}
+                          <button
+                            type="button"
+                            onClick={() => setContact((c) => ({ ...c, email: emailSuggestion }))}
+                            className="font-semibold text-green underline underline-offset-2 hover:text-ink"
+                          >
+                            {emailSuggestion}
+                          </button>
+                          ?
+                        </p>
+                      )}
+                    </Field>
                     {/* Honeypot: hidden from people, filled by bots */}
                     <div aria-hidden className="absolute -left-[9999px] h-0 w-0 overflow-hidden">
                       <label>
@@ -394,6 +451,8 @@ function Field({
   value,
   onChange,
   error,
+  valid,
+  children,
   ...rest
 }: {
   id: string;
@@ -401,27 +460,43 @@ function Field({
   value: string;
   onChange: (v: string) => void;
   error: string | null;
-} & Omit<React.InputHTMLAttributes<HTMLInputElement>, "onChange" | "value" | "id">) {
+  valid?: boolean;
+  children?: React.ReactNode;
+} & Omit<React.InputHTMLAttributes<HTMLInputElement>, "onChange" | "value" | "id" | "children">) {
   return (
     <div>
       <label htmlFor={id} className="mb-1.5 block text-[0.88rem] font-semibold text-ink">
         {label}
       </label>
-      <input
-        id={id}
-        name={id}
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        aria-invalid={!!error}
-        aria-describedby={error ? `${id}-err` : undefined}
-        className="field"
-        {...rest}
-      />
+      <div className="relative">
+        <input
+          id={id}
+          name={id}
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          aria-invalid={!!error}
+          aria-describedby={error ? `${id}-err` : undefined}
+          aria-required
+          className="field pr-12"
+          {...rest}
+        />
+        {/* tick once the value passes validation */}
+        <span
+          aria-hidden
+          className={clsx(
+            "pointer-events-none absolute right-3.5 top-1/2 grid size-6 -translate-y-1/2 place-items-center rounded-full bg-green text-offwhite transition-[opacity,transform] duration-300 ease-[var(--ease-out-soft)]",
+            valid && !error ? "scale-100 opacity-100" : "scale-50 opacity-0",
+          )}
+        >
+          <CheckIcon className="size-3.5" />
+        </span>
+      </div>
       {error && (
         <p id={`${id}-err`} className="mt-1.5 text-[0.82rem] text-[#b3261e]">
           {error}
         </p>
       )}
+      {children}
     </div>
   );
 }

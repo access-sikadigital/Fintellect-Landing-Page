@@ -18,13 +18,14 @@ npm run build && npm start
 - **Quiz:** `src/components/quiz/Quiz.tsx`. Step 1 is from the design; steps 2–10 are drafts (TO CONFIRM).
   Choosing "No, I don't own property" skips the two property questions.
 - **Lead endpoint:** `src/app/api/lead/route.ts`.
+- **Form validation:** `src/lib/validation.ts` (shared by the quiz and the server): name = letters, spaces, hyphens, apostrophes only; phone = Australian mobile only (04…, +61 4…); email = full address check plus typo suggestions (gmial.com → gmail.com).
 - **Sections:** `src/components/sections/`.
 
 ## Leads and tracking
 
 | Env var | What it does |
 | --- | --- |
-| `LEAD_WEBHOOK_URL` | Each completed quiz is POSTed here as JSON (CRM / GoHighLevel / Zapier / Make). If unset, leads are only written to the server log. **Set this before ads go live.** |
+| `LEAD_WEBHOOK_URL` | GoHighLevel Inbound Webhook (workflow trigger). Each completed quiz is POSTed as flat JSON: `first_name`, `last_name`, `full_name`, `email`, `phone` (+61…), `phone_local`, `ato_debt_amount`, `ato_status`, `owns_property`, `property_value`, `mortgage_owing`, `time_trading`, `business_structure`, `lodgements_up_to_date`, `state`, `quiz_summary`, `tags`, `utm_*`, `fbclid`, `landing_page`, `referrer`, `event_id`. If the webhook fails the visitor sees an error and can retry. Set in `.env.local` and in the host (e.g. Vercel) env vars. |
 | `NEXT_PUBLIC_META_PIXEL_ID` | Loads the Meta Pixel: `PageView`, `QuizStart`, `QuizStep` (custom) and `Lead`. |
 | `META_CAPI_TOKEN` | Sends a server-side `Lead` to the Conversions API with hashed email/phone, deduplicated with the pixel via a shared `event_id`. |
 | `META_TEST_EVENT_CODE` | Optional, for testing in Events Manager. Remove for live. |

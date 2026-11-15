@@ -49,5 +49,6 @@ export function attribution(): Record<string, string> {
   if (fbp) out.fbp = fbp;
   if (fbc) out.fbc = fbc;
   out.page = window.location.href.split("#")[0];
+  if (document.referrer) out.referrer = document.referrer.slice(0, 300);
   return out;
 }
