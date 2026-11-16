@@ -13,7 +13,7 @@ import { ArrowIcon } from "@/components/ui/primitives";
  * the quiz, and tucks away whenever the quiz or the final call to action is on screen.
  * Tapping it glides the page back up to the quiz.
  */
-export function MobileCta() {
+export function MobileCta({ label = cta, status = "About a minute" }: { label?: string; status?: string } = {}) {
   const [show, setShow] = useState(false);
   const scrollToQuiz = useScrollToQuiz();
 
@@ -54,7 +54,7 @@ export function MobileCta() {
               <span className="absolute inline-flex size-full animate-ping rounded-full bg-mint/70" />
               <span className="relative inline-flex size-2 rounded-full bg-mint" />
             </span>
-            About a minute
+            {status}
           </span>
           <span>Australian Credit Licence {site.acl}</span>
         </div>
@@ -72,7 +72,7 @@ export function MobileCta() {
             aria-hidden
             className="pointer-events-none absolute inset-y-0 -left-1/3 w-1/4 -skew-x-12 bg-gradient-to-r from-transparent via-white to-transparent opacity-80 motion-safe:animate-[sheen_4.5s_ease-in-out_1.2s_infinite]"
           />
-          <span className="relative text-[1.02rem] font-semibold tracking-[-0.01em]">{cta}</span>
+          <span className="relative text-[1.02rem] font-semibold tracking-[-0.01em]">{label}</span>
           <span className="relative grid size-11 shrink-0 place-items-center rounded-[0.95rem] bg-ink text-offwhite">
             <ArrowIcon className="size-4 -rotate-90 transition-transform duration-300 group-active:-translate-y-0.5" />
           </span>
