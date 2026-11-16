@@ -52,6 +52,18 @@
   .fl-latest .fl-badges img { height: 72px !important; }
   .fl-latest .fl-dash { display: none !important; }
 }
+/*
+ * Phones: the quiz moves up to sit right after the headline (badge → headline → quiz → intro → stats → cards).
+ * The copy column dissolves (display: contents) so its pieces and the quiz can be re-ordered in one column.
+ */
+@media (max-width: 767px) {
+  .fl-latest .fl-hero-row { row-gap: 0 !important; }
+  .fl-latest .fl-hero-copy { display: contents; }
+  .fl-latest .fl-hero-copy > * { flex: 1 1 100%; order: 4; min-width: 0; }
+  .fl-latest .fl-hero-copy > :nth-child(1) { flex: 0 1 auto; order: 1; }
+  .fl-latest .fl-hero-copy > :nth-child(2) { order: 2; }
+  .fl-latest .fl-hero-quiz { order: 3; flex: 1 1 100% !important; margin: 0 0 36px; }
+}
 @media (prefers-reduced-motion: reduce) {
   .fl-latest .fl-up, .fl-latest .fl-float, .fl-latest .fl-live, .fl-latest .fl-bar-fill { animation: none; }
 }

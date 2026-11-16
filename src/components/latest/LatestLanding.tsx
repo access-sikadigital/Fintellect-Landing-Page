@@ -51,8 +51,8 @@ export function LatestLanding() {
           </div>
         </header>
     
-        <div style={{ position: "relative", maxWidth: "1200px", margin: "0 auto", padding: "clamp(32px, 6vw, 72px) 20px clamp(64px, 9vw, 120px)", display: "flex", flexWrap: "wrap", gap: "clamp(36px, 5vw, 64px)", alignItems: "center" }}>
-          <div style={{ flex: "1 1 500px", minWidth: "0" }}>
+        <div className="fl-hero-row" style={{ position: "relative", maxWidth: "1200px", margin: "0 auto", padding: "clamp(32px, 6vw, 72px) 20px clamp(64px, 9vw, 120px)", display: "flex", flexWrap: "wrap", gap: "clamp(36px, 5vw, 64px)", alignItems: "center" }}>
+          <div className="fl-hero-copy" style={{ flex: "1 1 500px", minWidth: "0" }}>
             <div className="fl-up" style={{ display: "inline-flex", alignItems: "center", gap: "10px", background: "rgba(159,211,168,.12)", border: "1px solid rgba(159,211,168,.3)", color: "#fbfeee", fontSize: "14px", fontWeight: "600", padding: "7px 14px 7px 8px", borderRadius: "999px", marginBottom: "28px" }}>
               <span style={{ background: "#C62828", color: "#FFFFFF", fontSize: "12px", fontWeight: "700", padding: "3px 9px", borderRadius: "999px" }}>New</span>
               ATO interest stopped being deductible on 1 July 2025
@@ -92,7 +92,7 @@ export function LatestLanding() {
           </div>
     
           {/* QUIZ (live ATO debt quiz) */}
-          <div className="fl-up fl-d2" style={{ position: "relative", flex: "1 1 440px", maxWidth: "520px", minWidth: "0" }}>
+          <div className="fl-up fl-d2 fl-hero-quiz" style={{ position: "relative", flex: "1 1 440px", maxWidth: "520px", minWidth: "0" }}>
     <div id="quiz" style={{ position: "relative", color: "#012412", borderRadius: "22px", boxShadow: "0 30px 70px rgba(0,0,0,.4)" }}>
     <LatestQuiz />
     </div>
