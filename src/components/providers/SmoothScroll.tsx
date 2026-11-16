@@ -7,7 +7,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 gsap.registerPlugin(ScrollTrigger);
 
-type Ctx = { scrollToQuiz: () => void };
+type Ctx = { scrollToQuiz: (offset?: number) => void };
 const SmoothCtx = createContext<Ctx>({ scrollToQuiz: () => {} });
 
 /** Scrolls to the quiz and moves keyboard focus into it. */
@@ -64,13 +64,13 @@ export function SmoothScroll({ children }: { children: ReactNode }) {
     };
   }, []);
 
-  const scrollToQuiz = useCallback(() => {
+  const scrollToQuiz = useCallback((customOffset?: number) => {
     const target = document.getElementById("quiz");
     if (!target) return;
     const focus = () => target.querySelector<HTMLElement>("[data-quiz-focus]")?.focus({ preventScroll: true });
     // Phones have no fixed header, so the quiz can sit near the top edge
     const w = window.innerWidth;
-    const offset = w < 640 ? -16 : w < 1024 ? -84 : -110;
+    const offset = customOffset ?? (w < 640 ? -16 : w < 1024 ? -84 : -110);
     const top = target.getBoundingClientRect().top + window.scrollY + offset;
     const distance = Math.abs(top - window.scrollY);
     if (lenisRef.current) {
