@@ -590,8 +590,13 @@ export function LatestQuiz() {
         <div className="fl-top">
           <span>
             {i > 0 ? (
-              <button className="fl-back" type="button" onClick={back}>
-                ← Back
+              <button className="fl-back fl-back-pill" type="button" onClick={back}>
+                <span className="fl-back-ic" aria-hidden="true">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M19 12H5M11 18l-6-6 6-6" />
+                  </svg>
+                </span>
+                Back
               </button>
             ) : (
               <span className="fl-tag">{LOAN_TYPE}</span>
@@ -632,6 +637,7 @@ export function LatestQuiz() {
               value={a.amount ?? AMOUNT.start}
               aria-label="Amount"
               aria-valuetext={money(a.amount ?? AMOUNT.start)}
+              style={{ ["--fill" as string]: ((a.amount ?? AMOUNT.start) - AMOUNT.min) / (AMOUNT.max - AMOUNT.min) }}
               onChange={(e) => setA((p) => ({ ...p, amount: +e.target.value }))}
             />
             <div className="fl-ends">
