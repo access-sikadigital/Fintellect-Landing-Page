@@ -1,8 +1,8 @@
 /* eslint-disable @next/next/no-img-element */
-import { site } from "@/lib/content";
 import { MobileCta } from "@/components/layout/MobileCta";
 import { QuizLink } from "@/components/original/QuizLink";
 import { LatestQuiz } from "./LatestQuiz";
+import { LatestFooter } from "./FunnelChrome";
 import "./latest.css";
 
 /**
@@ -366,20 +366,7 @@ export function LatestLanding() {
       </section>
     
       {/* FOOTER */}
-      <footer style={{ background: "#012412", color: "#E2E6D1", padding: "clamp(40px, 5vw, 56px) 20px clamp(32px, 4vw, 44px)" }}>
-        <div style={{ maxWidth: "1200px", margin: "0 auto" }}>
-          <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "space-between", alignItems: "center", gap: "20px", paddingBottom: "28px", borderBottom: "1px solid rgba(226,230,209,.18)" }}>
-            <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-              <img loading="lazy" decoding="async" src="/images/ato/logo-fintellect-footer.png" alt="Fintellect" style={{ display: "block", height: "72px", width: "auto" }} />
-            </div>
-            <div style={{ display: "flex", gap: "24px", fontSize: "14px", flexWrap: "wrap" }}>
-              <a href={site.privacyHref} target="_blank" rel="noopener" style={{ color: "#E2E6D1" }}>Privacy Policy</a>
-              <a href={site.termsHref} target="_blank" rel="noopener" style={{ color: "#E2E6D1" }}>Credit Guide</a>
-            </div>
-          </div>
-          <p style={{ fontSize: "13px", lineHeight: "1.65", color: "#B9C2AD", margin: "24px 0 0", maxWidth: "920px" }}>Fintellect is a trading name of Fintel Group (VIC) Pty Ltd, Australian Credit Licence 515382. Fintellect is an independent broker and isn&apos;t affiliated with the Australian Taxation Office. The information on this page is general only and doesn&apos;t take into account your objectives, financial situation or needs. All finance is subject to lender approval, terms and conditions, fees and charges. Speak to your accountant about the tax treatment of any loan.</p>
-        </div>
-      </footer>
+      <LatestFooter />
     
     
       {/* Phones: sticky call-to-action at the bottom of the screen */}

@@ -6,7 +6,6 @@ import {
   ABR_GUID,
   AMOUNT,
   ATO_STEPS,
-  BOOKING_URL,
   LOAN_TYPE,
   STATES,
   cleanAbn,
@@ -17,7 +16,8 @@ import {
   type ChoiceKey,
   type Opt,
 } from "@/lib/atoQuiz";
-import { checkEmail as checkEmailShared, sanitiseName } from "@/lib/validation";
+import { checkEmail as checkEmailShared, sanitiseName, toE164 } from "@/lib/validation";
+import { ATTRIBUTION_KEYS, BOOK_PATH, PREFILL_KEYS, saveContact } from "@/lib/funnel";
 import { attribution, newEventId, track, trackCustom } from "@/lib/track";
 
 /**
@@ -501,10 +501,13 @@ export function LatestQuiz() {
   }, [view.kind]);
 
   const goBook = useCallback(() => {
-    const u = new URL(BOOKING_URL);
-    (["first_name", "last_name", "email", "phone"] as const).forEach((k) => {
-      if (a[k]) u.searchParams.set(k, a[k]!);
-    });
+    // Funnel step 2 (/book): the GHL calendar, pre-filled with the quiz contact and carrying the ad attribution
+    const contact = { first_name: a.first_name, last_name: a.last_name, email: a.email, phone: a.phone ? toE164(a.phone) : undefined };
+    saveContact(contact);
+    const u = new URL(BOOK_PATH, window.location.origin);
+    for (const k of PREFILL_KEYS) if (contact[k]) u.searchParams.set(k, contact[k]!);
+    const attr = attribution();
+    for (const k of ATTRIBUTION_KEYS) if (attr[k]) u.searchParams.set(k, attr[k]);
     window.top!.location.href = u.toString();
   }, [a]);
 

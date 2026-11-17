@@ -21,6 +21,15 @@ npm run build && npm start
 - **Form validation:** `src/lib/validation.ts` (shared by the quiz and the server): name = letters, spaces, hyphens, apostrophes only; phone = Australian mobile only (04…, +61 4…); email = full address check plus typo suggestions (gmial.com → gmail.com).
 - **Sections:** `src/components/sections/`.
 
+## Funnel
+
+Landing page (`/`) → calendar booking (`/book`) → thank you (`/thank-you`).
+
+- **Quiz → /book:** "Good fit" leads go to `/book` with name, email, phone (+61…) and the UTMs/fbclid in the URL.
+- **/book:** Robert's GoHighLevel calendar widget (`src/components/latest/BookingCalendar.tsx`), pre-filled from the quiz. GHL creates the appointment against the same contact the quiz webhook created, so bookings, workflows and attribution stay in GHL. Calendar ID: `src/lib/funnel.ts`, override with `NEXT_PUBLIC_GHL_CALENDAR_ID`.
+- **/book → /thank-you:** set by the calendar in GHL (Calendar settings → after booking → Redirect URL). It must point to `https://<site>/thank-you`.
+- **/thank-you:** fires Meta `Schedule` once per visit (pixel + Conversions API via `/api/event`, shared event_id).
+
 ## Leads and tracking
 
 | Env var | What it does |
@@ -29,6 +38,7 @@ npm run build && npm start
 | `NEXT_PUBLIC_META_PIXEL_ID` | Loads the Meta Pixel: `PageView`, `QuizStart`, `QuizStep` (custom) and `Lead`. |
 | `META_CAPI_TOKEN` | Sends a server-side `Lead` to the Conversions API with hashed email/phone, deduplicated with the pixel via a shared `event_id`. |
 | `META_TEST_EVENT_CODE` | Optional, for testing in Events Manager. Remove for live. |
+| `NEXT_PUBLIC_GHL_CALENDAR_ID` | Optional. GHL calendar shown on `/book` (defaults to Robert's lending review calendar). |
 | `NEXT_PUBLIC_SITE_URL` | Public URL, used for social share images. |
 
 UTM tags and `fbclid` are captured on arrival and sent with the lead.

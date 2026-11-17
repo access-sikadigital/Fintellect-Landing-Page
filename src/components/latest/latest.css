@@ -82,7 +82,7 @@
 #fl-quiz .fl-out { opacity: 0; transform: translateX(-14px); }
 #fl-quiz .fl-in { opacity: 0; transform: translateX(14px); }
 #fl-quiz .fl-top { display: flex; justify-content: space-between; align-items: center; font-size: 13px; color: var(--m); margin-bottom: 8px; min-height: 20px; }
-#fl-quiz .fl-tag { display: inline-block; font-size: 12px; font-weight: 600; letter-spacing: 0.02em; color: var(--g); background: var(--hi); border-radius: 99px; padding: 4px 10px; }
+#fl-quiz .fl-tag { display: inline-block; font-size: 12px; font-weight: 700; letter-spacing: 0.02em; color: #FFFFFF; background: #C62828; border-radius: 99px; padding: 4px 10px; }
 #fl-quiz .fl-bar { height: 7px; background: var(--s); border-radius: 99px; overflow: hidden; margin-bottom: 22px; }
 #fl-quiz .fl-bar span { display: block; height: 100%; background: var(--g); border-radius: 99px; transition: width 0.45s cubic-bezier(0.2, 0.8, 0.2, 1); }
 #fl-quiz h3 { font-family: var(--font-fraunces), "Fraunces", Georgia, serif; font-size: 25px; line-height: 1.2; margin: 0 0 6px; color: var(--d); font-weight: 600; letter-spacing: normal; outline: none; }
@@ -198,3 +198,7 @@
 @media (prefers-reduced-motion: reduce) {
   #fl-quiz * { animation: none !important; transition: none !important; }
 }
+
+/* /book: the GHL widget pads its desktop layout and draws its own border; pull it up so it sits flush in the card */
+.fl-ghl-frame { margin-top: 0; }
+@media (min-width: 900px) { .fl-ghl-frame { margin-top: -64px; } }

@@ -1,5 +1,5 @@
-import { createHash } from "node:crypto";
 import { NextResponse, type NextRequest } from "next/server";
+import { sendToMetaCapi } from "@/lib/metaCapi";
 import { NO_PROPERTY, quizSteps } from "@/lib/content";
 import { checkAuMobile, checkEmail, checkName, formatAuMobile, splitName, toE164 } from "@/lib/validation";
 import { AMOUNT, ATO_STEPS, LOAN_TYPE, STATES, cleanAbn, fmtAbn, money, optText, outcomeFor, type ChoiceKey } from "@/lib/atoQuiz";
@@ -30,7 +30,6 @@ const ANSWER_KEYS: Record<string, string> = {
   state: "state",
 };
 
-const sha256 = (v: string) => createHash("sha256").update(v.trim().toLowerCase()).digest("hex");
 const clean = (v: unknown, max = 200) => (typeof v === "string" ? v.trim().slice(0, max) : "");
 
 export async function POST(req: NextRequest) {
@@ -105,7 +104,7 @@ export async function POST(req: NextRequest) {
     event_id: eventId,
   };
 
-  const meta = sendToMetaCapi({ email: email.value, phoneE164, firstName, lastName, eventId, answers, attribution }, req);
+  const meta = sendLeadToCapi({ email: email.value, phoneE164, firstName, lastName, eventId, answers, attribution }, req);
 
   const webhook = process.env.LEAD_WEBHOOK_URL;
   if (!webhook) {
@@ -133,10 +132,7 @@ export async function POST(req: NextRequest) {
   return NextResponse.json({ ok: true });
 }
 
-/* ------------------------------------------------------------------ */
-/* Meta Conversions API                                                */
-/* ------------------------------------------------------------------ */
-
+/** Lead event for the Conversions API (same payload as before the helper moved to src/lib/metaCapi.ts). */
 type CapiLead = {
   email: string;
   phoneE164: string;
@@ -147,46 +143,20 @@ type CapiLead = {
   attribution: Record<string, string>;
 };
 
-async function sendToMetaCapi(lead: CapiLead, req: NextRequest) {
-  const pixelId = process.env.NEXT_PUBLIC_META_PIXEL_ID;
-  const capiToken = process.env.META_CAPI_TOKEN;
-  if (!pixelId || !capiToken) return;
-  const payload = {
-    data: [
-      {
-        event_name: "Lead",
-        event_time: Math.floor(Date.now() / 1000),
-        event_id: lead.eventId,
-        action_source: "website",
-        event_source_url: lead.attribution.page,
-        user_data: {
-          em: [sha256(lead.email)],
-          ph: [sha256(lead.phoneE164.replace(/\D/g, ""))],
-          fn: [sha256(lead.firstName)],
-          ...(lead.lastName ? { ln: [sha256(lead.lastName.split(/\s+/).pop() ?? "")] } : {}),
-          country: [sha256("au")],
-          client_ip_address: req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || undefined,
-          client_user_agent: req.headers.get("user-agent") || undefined,
-          fbp: lead.attribution.fbp,
-          fbc: lead.attribution.fbc,
-        },
-        custom_data: { content_name: "ATO debt quiz", content_category: lead.answers.atoDebt },
-      },
-    ],
-    ...(process.env.META_TEST_EVENT_CODE ? { test_event_code: process.env.META_TEST_EVENT_CODE } : {}),
-  };
-  try {
-    const r = await fetch(`https://graph.facebook.com/v21.0/${pixelId}/events?access_token=${encodeURIComponent(capiToken)}`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-      signal: AbortSignal.timeout(8_000),
-    });
-    if (!r.ok) console.error("[lead] Meta CAPI error", r.status, await r.text());
-  } catch (e) {
-    console.error("[lead] Meta CAPI failed", e);
-  }
-}
+const sendLeadToCapi = (lead: CapiLead, req: NextRequest) =>
+  sendToMetaCapi(
+    {
+      eventName: "Lead",
+      eventId: lead.eventId,
+      email: lead.email,
+      phoneE164: lead.phoneE164,
+      firstName: lead.firstName,
+      lastName: lead.lastName,
+      attribution: lead.attribution,
+      customData: { content_name: "ATO debt quiz", content_category: lead.answers.atoDebt },
+    },
+    req,
+  );
 
 /* ------------------------------------------------------------------ */
 /* Version 3: the LATEST design's ATO debt quiz                        */
@@ -288,7 +258,7 @@ async function handleV3(body: Record<string, unknown>, req: NextRequest) {
   // Like the design: the Lead conversion only fires for "Good fit" answers
   const meta =
     outcome === "Good fit"
-      ? sendToMetaCapi({ email: email.value, phoneE164, firstName, lastName, eventId, answers: { atoDebt: LOAN_TYPE }, attribution }, req)
+      ? sendLeadToCapi({ email: email.value, phoneE164, firstName, lastName, eventId, answers: { atoDebt: LOAN_TYPE }, attribution }, req)
       : Promise.resolve();
 
   const webhook = process.env.LEAD_WEBHOOK_URL;
