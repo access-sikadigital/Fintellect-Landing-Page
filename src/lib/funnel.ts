@@ -1,6 +1,7 @@
 /**
  * Funnel: landing page (/) → calendar booking (/book) → thank you (/thank-you).
- * Quiz answers that need a closer look ("Review") go to /enquiry-thank-you instead of booking.
+ * For now every lead books (Review leads included). /enquiry-thank-you is kept for when the funnel is
+ * tightened and Review leads should skip the calendar.
  *
  * The calendar on /book is the GoHighLevel booking widget, so the appointment, the contact
  * and every GHL workflow and attribution report stay in GHL. After a booking, the widget sends

@@ -3,7 +3,8 @@
  * Shared by the quiz component (browser) and /api/lead (server), so both accept the same answers.
  *
  * `review: true` marks an answer that sends the lead to "Review" instead of "Good fit".
- * `exit: true` ends the quiz early (too new to trade) without sending a lead.
+ * `exit: true` ends the quiz early without sending a lead (not used for now: everyone can book).
+ * Review answers don't block booking either; they only mark the lead "Review" in GHL and Meta.
  */
 
 export type Opt = string | { t: string; review?: boolean; exit?: boolean };
@@ -44,7 +45,7 @@ export const ATO_STEPS: AtoStep[] = [
     type: "choice",
     q: "How long has the business been trading?",
     help: "From when the ABN started trading.",
-    opts: [{ t: "Under 6 months", exit: true, review: true }, { t: "6 – 12 months", review: true }, "1 – 2 years", "2 – 3 years", "3+ years"],
+    opts: [{ t: "Under 6 months", review: true }, { t: "6 – 12 months", review: true }, "1 – 2 years", "2 – 3 years", "3+ years"],
     two: true,
   },
   {

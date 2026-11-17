@@ -17,7 +17,7 @@ import {
   type Opt,
 } from "@/lib/atoQuiz";
 import { checkEmail as checkEmailShared, sanitiseName, toE164 } from "@/lib/validation";
-import { ATTRIBUTION_KEYS, BOOK_PATH, ENQUIRY_THANKS_PATH, PREFILL_KEYS, saveContact } from "@/lib/funnel";
+import { ATTRIBUTION_KEYS, BOOK_PATH, PREFILL_KEYS, saveContact } from "@/lib/funnel";
 import { attribution, newEventId, relayConversion, track, trackCustom } from "@/lib/track";
 
 /**
@@ -482,12 +482,6 @@ export function LatestQuiz() {
     }
   };
 
-  /** Review outcome: the lead is in GHL; send them to the enquiry thank-you page (its own URL, for tracking). */
-  const goThanks = () => {
-    saveContact({ first_name: a.first_name, last_name: a.last_name, email: a.email, phone: a.phone ? toE164(a.phone) : undefined });
-    window.top!.location.href = new URL(ENQUIRY_THANKS_PATH, window.location.origin).toString();
-  };
-
   /* ---------- calculating screen ---------- */
   const calcLines = ["Checking your answers", "Matching against 40+ lenders' criteria", `Weighing up ${LOAN_TYPE} options`, "Preparing your summary for Robert"];
   const [calcK, setCalcK] = useState(0);
@@ -500,7 +494,8 @@ export function LatestQuiz() {
       k++;
       setCalcK(k);
       if (k > calcLines.length) {
-        t = setTimeout(() => (outcomeFor(a) === "Good fit" ? showEnd("fit") : goThanks()), 450);
+        // Everyone books a call for now; the outcome (Good fit / Review) still goes to GHL and Meta
+        t = setTimeout(() => showEnd("fit"), 450);
         return;
       }
       t = setTimeout(tick, CALC_STEP);
@@ -567,7 +562,7 @@ export function LatestQuiz() {
           <div className="fl-end">
             <div className="fl-tick">✓</div>
             <h3 ref={headingRef} tabIndex={-1} data-quiz-focus>
-              Good news, {nm}. There are options worth talking through.
+              {outcomeFor(a) === "Good fit" ? `Good news, ${nm}. There are options worth talking through.` : `Thanks, ${nm}. Let's talk it through.`}
             </h3>
             <p>Pick a time for a 15-minute call with Robert. He&apos;ll go over what lenders are likely to look at for your situation.</p>
             <p>Taking you to his calendar now…</p>
