@@ -6,7 +6,6 @@ import {
   ABR_GUID,
   AMOUNT,
   ATO_STEPS,
-  BOOKING_URL,
   LOAN_TYPE,
   STATES,
   cleanAbn,
@@ -17,8 +16,9 @@ import {
   type ChoiceKey,
   type Opt,
 } from "@/lib/atoQuiz";
-import { checkEmail as checkEmailShared, sanitiseName } from "@/lib/validation";
-import { attribution, newEventId, track, trackCustom } from "@/lib/track";
+import { checkEmail as checkEmailShared, sanitiseName, toE164 } from "@/lib/validation";
+import { ATTRIBUTION_KEYS, BOOK_PATH, PREFILL_KEYS, saveContact } from "@/lib/funnel";
+import { attribution, newEventId, relayConversion, track, trackCustom } from "@/lib/track";
 
 /**
  * The ATO debt quiz from the LATEST design, rebuilt in React with the same markup classes,
@@ -405,7 +405,11 @@ export function LatestQuiz() {
         const data = (await res.json().catch(() => ({}))) as { error?: string };
         throw new Error(data.error || "Something went wrong sending your details. Please try again.");
       }
-      if (outcome === "Good fit") track("Lead", { content_name: "ATO Debt quiz", content_category: LOAN_TYPE }, eventId);
+      if (outcome === "Good fit") {
+        const lead = { content_name: "ATO Debt quiz", content_category: LOAN_TYPE };
+        track("Lead", lead, eventId);
+        relayConversion("Lead", eventId, { first_name: final.first_name, last_name: final.last_name, email: final.email, phone: toE164(phone) }, lead);
+      }
       setA(final);
       await new Promise((r) => setTimeout(r, Math.max(0, 600 - (Date.now() - started))));
       setSending(false);
@@ -501,10 +505,13 @@ export function LatestQuiz() {
   }, [view.kind]);
 
   const goBook = useCallback(() => {
-    const u = new URL(BOOKING_URL);
-    (["first_name", "last_name", "email", "phone"] as const).forEach((k) => {
-      if (a[k]) u.searchParams.set(k, a[k]!);
-    });
+    // Funnel step 2 (/book): the GHL calendar, pre-filled with the quiz contact and carrying the ad attribution
+    const contact = { first_name: a.first_name, last_name: a.last_name, email: a.email, phone: a.phone ? toE164(a.phone) : undefined };
+    saveContact(contact);
+    const u = new URL(BOOK_PATH, window.location.origin);
+    for (const k of PREFILL_KEYS) if (contact[k]) u.searchParams.set(k, contact[k]!);
+    const attr = attribution();
+    for (const k of ATTRIBUTION_KEYS) if (attr[k]) u.searchParams.set(k, attr[k]);
     window.top!.location.href = u.toString();
   }, [a]);
 

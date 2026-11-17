@@ -21,7 +21,6 @@ export const AMOUNT = { min: 10000, max: 1000000, step: 5000, start: 50000 };
 export const STATES = ["VIC", "NSW", "QLD", "WA", "SA", "TAS", "ACT", "NT"];
 /** ABN Lookup web services GUID (abr.business.gov.au), from the design's config. */
 export const ABR_GUID = "d0e5d8bc-7013-4867-b787-5dca0e5ba826";
-export const BOOKING_URL = "https://book.fintellect.com.au/calendar-booking-page";
 
 export const ATO_STEPS: AtoStep[] = [
   { key: "loan_amount", type: "amount", q: "Roughly how much do you owe the ATO?", help: "Drag to a rough figure. It doesn't need to be exact." },

@@ -52,3 +52,51 @@ export function attribution(): Record<string, string> {
   if (document.referrer) out.referrer = document.referrer.slice(0, 300);
   return out;
 }
+
+/**
+ * Server-side copy of a conversion via Fintellect's Conversions API relay (Vercel project
+ * "fintellect-capi", which holds the CAPI token; the GHL funnel pages use the same relay).
+ * Sent from the browser, like the GHL pages, so the relay sees the visitor's IP and user agent.
+ * Raw contact details go in; the relay hashes them. Shares the pixel's event_id, so Meta counts it once.
+ */
+export const CAPI_RELAY = "https://fintellect-capi.vercel.app/api/capi";
+
+export function relayConversion(
+  eventName: string,
+  eventId: string,
+  contact: { first_name?: string; last_name?: string; email?: string; phone?: string } = {},
+  customData: Record<string, unknown> = {},
+) {
+  try {
+    const a = attribution();
+    const user = {
+      em: contact.email,
+      ph: contact.phone,
+      fn: contact.first_name,
+      ln: contact.last_name,
+      email: contact.email,
+      phone: contact.phone,
+      first_name: contact.first_name,
+      last_name: contact.last_name,
+      fbp: a.fbp,
+      fbc: a.fbc,
+      client_user_agent: navigator.userAgent,
+    };
+    void fetch(CAPI_RELAY, {
+      method: "POST",
+      keepalive: true,
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        event_name: eventName,
+        event_id: eventId,
+        event_source_url: window.location.href.split("#")[0],
+        action_source: "website",
+        ...user,
+        user_data: user,
+        custom_data: customData,
+      }),
+    }).catch(() => {});
+  } catch {
+    /* never block the visitor on tracking */
+  }
+}
