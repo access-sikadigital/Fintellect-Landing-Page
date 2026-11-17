@@ -379,8 +379,11 @@ export function LatestQuiz() {
     setSending(true);
     setBusy(true);
     const started = Date.now();
-    try {
-      const res = await fetch("/api/lead", {
+    // Sends the lead; a server or network failure is retried once. Only a 422 (a detail the visitor
+    // needs to fix) stops them: otherwise they always reach the calendar, and the GHL booking still
+    // creates the contact even if the webhook was down.
+    const send = () =>
+      fetch("/api/lead", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -400,11 +403,18 @@ export function LatestQuiz() {
           attribution: attribution(),
           company: honeypot.current?.value ?? "",
         }),
-      });
-      if (!res.ok) {
+      }).then(
+        (r) => r,
+        () => null,
+      );
+    try {
+      let res = await send();
+      if (!res || res.status >= 500) res = await send();
+      if (res && res.status === 422) {
         const data = (await res.json().catch(() => ({}))) as { error?: string };
-        throw new Error(data.error || "Something went wrong sending your details. Please try again.");
+        throw new Error(data.error || "Please check your details and try again.");
       }
+      if (!res || !res.ok) console.error("[lead] not saved, continuing to the calendar", res?.status);
       // Every completed quiz is a Lead (pixel + CAPI relay). lead_outcome separates good fits from reviews in Meta.
       const lead = { content_name: "ATO Debt quiz", content_category: LOAN_TYPE, lead_outcome: outcome === "Good fit" ? "good_fit" : "review" };
       track("Lead", lead, eventId);
