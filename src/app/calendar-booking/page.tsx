@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   description: "Pick a time for a free 15-minute phone call with Robert about clearing your ATO debt.",
 };
 
-/** Funnel step 2: the GoHighLevel calendar, pre-filled from the quiz. */
+/** Funnel step 2 (/calendar-booking): the GoHighLevel calendar, pre-filled from the quiz. */
 export default function BookPage() {
   return (
     <FunnelPage>

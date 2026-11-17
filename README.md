@@ -23,13 +23,14 @@ npm run build && npm start
 
 ## Funnel
 
-Landing page (`/`) → calendar booking (`/book`) → thank you (`/thank-you`).
+Live at `https://fintellect-lp-ato-debt.vercel.app` (naming: `fintellect-lp-<product>.vercel.app`, split tests `-2`, `-3`).
 
-- **Everyone books:** all completed quizzes go to `/book`, "Review" answers included. `/enquiry-thank-you` is parked for when Review leads should skip the calendar. Every completed quiz fires `Lead` (pixel + CAPI) with `lead_outcome` = `good_fit` or `review`; good fits also fire custom `QualifiedLead`.
-- **Quiz → /book:** "Good fit" leads go to `/book` with name, email, phone (+61…) and the UTMs/fbclid in the URL.
-- **/book:** Robert's GoHighLevel calendar widget (`src/components/latest/BookingCalendar.tsx`), pre-filled from the quiz. GHL creates the appointment against the same contact the quiz webhook created, so bookings, workflows and attribution stay in GHL. Calendar ID: `src/lib/funnel.ts`, override with `NEXT_PUBLIC_GHL_CALENDAR_ID`.
-- **/book → /thank-you:** set by the calendar in GHL (Calendar settings → after booking → Redirect URL). It must point to `https://<site>/thank-you`.
-- **/thank-you:** fires Meta `Schedule` once per visit (pixel + Conversions API, shared event_id).
+Landing page (`/`) → calendar booking (`/calendar-booking`) → thank you (`/calendar-booking/thank-you`). Old `/book` and `/thank-you` URLs redirect to these.
+
+- **Everyone books:** all completed quizzes go to `/calendar-booking` with name, email, phone (+61…) and the UTMs/fbclid in the URL, "Review" answers included. `/enquiry-thank-you` is parked for when Review leads should skip the calendar. Every completed quiz fires `Lead` (pixel + CAPI) with `lead_outcome` = `good_fit` or `review`; good fits also fire custom `QualifiedLead`.
+- **/calendar-booking:** Robert's GoHighLevel calendar widget (`src/components/latest/BookingCalendar.tsx`), pre-filled from the quiz. GHL creates the appointment against the same contact the quiz webhook created, so bookings, workflows and attribution stay in GHL. Calendar ID: `src/lib/funnel.ts`, override with `NEXT_PUBLIC_GHL_CALENDAR_ID`.
+- **/calendar-booking → /calendar-booking/thank-you:** set by the calendar in GHL (Calendar settings → after booking → Redirect URL). It must point to `https://<site>/calendar-booking/thank-you`.
+- **/calendar-booking/thank-you:** fires Meta `Schedule` once per visit (pixel + Conversions API, shared event_id).
 - **Conversions API:** `Lead` and `Schedule` go server-side through the existing relay `https://fintellect-capi.vercel.app/api/capi` (Vercel project `fintellect-capi`, which holds the CAPI token; the GHL pages use it too). See `relayConversion` in `src/lib/track.ts`.
 
 ## Leads and tracking
@@ -40,7 +41,7 @@ Landing page (`/`) → calendar booking (`/book`) → thank you (`/thank-you`).
 | `NEXT_PUBLIC_META_PIXEL_ID` | Loads the Meta Pixel: `PageView`, `QuizStart`, `QuizStep` (custom) and `Lead`. |
 | `META_CAPI_TOKEN` | Sends a server-side `Lead` to the Conversions API with hashed email/phone, deduplicated with the pixel via a shared `event_id`. |
 | `META_TEST_EVENT_CODE` | Optional, for testing in Events Manager. Remove for live. |
-| `NEXT_PUBLIC_GHL_CALENDAR_ID` | Optional. GHL calendar shown on `/book` (defaults to Robert's lending review calendar). |
+| `NEXT_PUBLIC_GHL_CALENDAR_ID` | Optional. GHL calendar shown on `/calendar-booking` (defaults to Robert's lending review calendar). |
 | `NEXT_PUBLIC_GTM_ID` | Google Tag Manager container (`GTM-XXXXXXX`). Funnel events are pushed to `dataLayer` as `fl_lead`, `fl_qualifiedlead`, `fl_schedule`, `fl_quizstart`, `fl_quizstep` (with `event_id`, `lead_outcome`). |
 | `NEXT_PUBLIC_CLARITY_ID` | Microsoft Clarity project ID. |
 | `NEXT_PUBLIC_GSC_VERIFICATION` | Google Search Console HTML-tag verification code (the `content` value only). |

@@ -1,5 +1,8 @@
 /**
- * Funnel: landing page (/) → calendar booking (/book) → thank you (/thank-you).
+ * Funnel (naming: fintellect-lp-<product>.vercel.app):
+ *   step 1  /                            landing page + quiz
+ *   step 2  /calendar-booking            GHL calendar widget
+ *   step 3  /calendar-booking/thank-you  booked (fires Schedule)
  * For now every lead books (Review leads included). /enquiry-thank-you is kept for when the funnel is
  * tightened and Review leads should skip the calendar.
  *
@@ -7,7 +10,7 @@
  * and every GHL workflow and attribution report stay in GHL. After a booking, the widget sends
  * the whole tab to the calendar's "Redirect URL" (set in GHL → Calendars → the calendar →
  * Forms & payment → After booking). For the funnel to finish on /thank-you, that calendar's
- * Redirect URL must be https://<this site>/thank-you.
+ * Redirect URL must be https://<this site>/calendar-booking/thank-you.
  */
 
 /** GHL calendar shown on /book. Override per environment with NEXT_PUBLIC_GHL_CALENDAR_ID. */
@@ -15,7 +18,8 @@ export const GHL_CALENDAR_ID = process.env.NEXT_PUBLIC_GHL_CALENDAR_ID || "8RpEp
 export const GHL_WIDGET_URL = `https://api.leadconnectorhq.com/widget/booking/${GHL_CALENDAR_ID}`;
 export const GHL_EMBED_SCRIPT = "https://link.msgsndr.com/js/form_embed.js";
 
-export const BOOK_PATH = "/book";
+export const BOOK_PATH = "/calendar-booking";
+export const THANK_YOU_PATH = "/calendar-booking/thank-you";
 /** Where "Review" leads land (answers that need a closer look before booking). */
 export const ENQUIRY_THANKS_PATH = "/enquiry-thank-you";
 
