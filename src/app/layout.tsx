@@ -14,6 +14,11 @@ export const metadata: Metadata = {
   description,
   // Paid-traffic landing page: keep it out of search results so it doesn't compete with the main site.
   robots: { index: false, follow: false },
+  // Search Console and Bing Webmaster Tools ownership (HTML tag method); only rendered when set
+  verification: {
+    ...(process.env.NEXT_PUBLIC_GSC_VERIFICATION ? { google: process.env.NEXT_PUBLIC_GSC_VERIFICATION } : {}),
+    ...(process.env.NEXT_PUBLIC_BING_VERIFICATION ? { other: { "msvalidate.01": process.env.NEXT_PUBLIC_BING_VERIFICATION } } : {}),
+  },
   openGraph: {
     type: "website",
     locale: "en_AU",
@@ -29,12 +34,30 @@ export const viewport: Viewport = {
 };
 
 const pixelId = process.env.NEXT_PUBLIC_META_PIXEL_ID;
+/** Google Tag Manager container (GTM-XXXXXXX) and Microsoft Clarity project ID. Each loads only when set. */
+const gtmId = process.env.NEXT_PUBLIC_GTM_ID;
+const clarityId = process.env.NEXT_PUBLIC_CLARITY_ID;
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en-AU" className={`${inter.variable} ${fraunces.variable}`}>
       <body>
+        {gtmId && (
+          <noscript>
+            <iframe src={`https://www.googletagmanager.com/ns.html?id=${gtmId}`} height="0" width="0" style={{ display: "none", visibility: "hidden" }} />
+          </noscript>
+        )}
         <SmoothScroll>{children}</SmoothScroll>
+        {gtmId && (
+          <Script id="gtm" strategy="afterInteractive">
+            {`(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','${gtmId}');`}
+          </Script>
+        )}
+        {clarityId && (
+          <Script id="clarity" strategy="afterInteractive">
+            {`(function(c,l,a,r,i,t,y){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);})(window, document, "clarity", "script", "${clarityId}");`}
+          </Script>
+        )}
         {pixelId && (
           <>
             <Script id="meta-pixel" strategy="afterInteractive">

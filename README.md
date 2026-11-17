@@ -41,6 +41,10 @@ Landing page (`/`) → calendar booking (`/book`) → thank you (`/thank-you`).
 | `META_CAPI_TOKEN` | Sends a server-side `Lead` to the Conversions API with hashed email/phone, deduplicated with the pixel via a shared `event_id`. |
 | `META_TEST_EVENT_CODE` | Optional, for testing in Events Manager. Remove for live. |
 | `NEXT_PUBLIC_GHL_CALENDAR_ID` | Optional. GHL calendar shown on `/book` (defaults to Robert's lending review calendar). |
+| `NEXT_PUBLIC_GTM_ID` | Google Tag Manager container (`GTM-XXXXXXX`). Funnel events are pushed to `dataLayer` as `fl_lead`, `fl_qualifiedlead`, `fl_schedule`, `fl_quizstart`, `fl_quizstep` (with `event_id`, `lead_outcome`). |
+| `NEXT_PUBLIC_CLARITY_ID` | Microsoft Clarity project ID. |
+| `NEXT_PUBLIC_GSC_VERIFICATION` | Google Search Console HTML-tag verification code (the `content` value only). |
+| `NEXT_PUBLIC_BING_VERIFICATION` | Bing Webmaster Tools `msvalidate.01` code (the `content` value only). |
 | `NEXT_PUBLIC_SITE_URL` | Public URL, used for social share images. |
 
 UTM tags and `fbclid` are captured on arrival and sent with the lead.

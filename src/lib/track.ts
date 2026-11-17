@@ -11,12 +11,26 @@ function fbq(): Fbq | null {
   return typeof f === "function" ? f : null;
 }
 
+/** Mirrors every funnel event into GTM's dataLayer (event names: fl_lead, fl_schedule, fl_quizstart...). */
+function dataLayerPush(event: string, params?: Record<string, unknown>, eventID?: string) {
+  if (typeof window === "undefined") return;
+  try {
+    const w = window as unknown as { dataLayer?: unknown[] };
+    w.dataLayer = w.dataLayer || [];
+    w.dataLayer.push({ event: `fl_${event.toLowerCase()}`, ...(params ?? {}), ...(eventID ? { event_id: eventID } : {}) });
+  } catch {
+    /* ignore */
+  }
+}
+
 export function track(event: string, params?: Record<string, unknown>, eventID?: string) {
   fbq()?.("track", event, params ?? {}, eventID ? { eventID } : undefined);
+  dataLayerPush(event, params, eventID);
 }
 
 export function trackCustom(event: string, params?: Record<string, unknown>) {
   fbq()?.("trackCustom", event, params ?? {});
+  dataLayerPush(event, params);
 }
 
 export function newEventId() {
