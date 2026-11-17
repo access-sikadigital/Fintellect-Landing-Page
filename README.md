@@ -28,7 +28,8 @@ Landing page (`/`) → calendar booking (`/book`) → thank you (`/thank-you`).
 - **Quiz → /book:** "Good fit" leads go to `/book` with name, email, phone (+61…) and the UTMs/fbclid in the URL.
 - **/book:** Robert's GoHighLevel calendar widget (`src/components/latest/BookingCalendar.tsx`), pre-filled from the quiz. GHL creates the appointment against the same contact the quiz webhook created, so bookings, workflows and attribution stay in GHL. Calendar ID: `src/lib/funnel.ts`, override with `NEXT_PUBLIC_GHL_CALENDAR_ID`.
 - **/book → /thank-you:** set by the calendar in GHL (Calendar settings → after booking → Redirect URL). It must point to `https://<site>/thank-you`.
-- **/thank-you:** fires Meta `Schedule` once per visit (pixel + Conversions API via `/api/event`, shared event_id).
+- **/thank-you:** fires Meta `Schedule` once per visit (pixel + Conversions API, shared event_id).
+- **Conversions API:** `Lead` and `Schedule` go server-side through the existing relay `https://fintellect-capi.vercel.app/api/capi` (Vercel project `fintellect-capi`, which holds the CAPI token; the GHL pages use it too). See `relayConversion` in `src/lib/track.ts`.
 
 ## Leads and tracking
 

@@ -18,7 +18,7 @@ import {
 } from "@/lib/atoQuiz";
 import { checkEmail as checkEmailShared, sanitiseName, toE164 } from "@/lib/validation";
 import { ATTRIBUTION_KEYS, BOOK_PATH, PREFILL_KEYS, saveContact } from "@/lib/funnel";
-import { attribution, newEventId, track, trackCustom } from "@/lib/track";
+import { attribution, newEventId, relayConversion, track, trackCustom } from "@/lib/track";
 
 /**
  * The ATO debt quiz from the LATEST design, rebuilt in React with the same markup classes,
@@ -405,7 +405,11 @@ export function LatestQuiz() {
         const data = (await res.json().catch(() => ({}))) as { error?: string };
         throw new Error(data.error || "Something went wrong sending your details. Please try again.");
       }
-      if (outcome === "Good fit") track("Lead", { content_name: "ATO Debt quiz", content_category: LOAN_TYPE }, eventId);
+      if (outcome === "Good fit") {
+        const lead = { content_name: "ATO Debt quiz", content_category: LOAN_TYPE };
+        track("Lead", lead, eventId);
+        relayConversion("Lead", eventId, { first_name: final.first_name, last_name: final.last_name, email: final.email, phone: toE164(phone) }, lead);
+      }
       setA(final);
       await new Promise((r) => setTimeout(r, Math.max(0, 600 - (Date.now() - started))));
       setSending(false);

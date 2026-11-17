@@ -1,14 +1,14 @@
 "use client";
 
 import { useEffect } from "react";
-import { attribution, newEventId, track } from "@/lib/track";
+import { newEventId, relayConversion, track } from "@/lib/track";
 import { loadContact } from "@/lib/funnel";
 
 const SENT_KEY = "ft-schedule-sent";
 
 /**
  * Fires the Meta "Schedule" conversion once per visit: the browser pixel plus a server-side
- * copy (/api/event → Conversions API) sharing one event_id so Meta counts it once.
+ * copy through the CAPI relay, sharing one event_id so Meta counts it once.
  * A refresh of the thank-you page doesn't count a second booking.
  */
 export function ScheduleTracker() {
@@ -30,12 +30,7 @@ export function ScheduleTracker() {
       }
     };
     fire();
-    void fetch("/api/event", {
-      method: "POST",
-      keepalive: true,
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ event: "Schedule", eventId, contact: loadContact(), attribution: attribution() }),
-    }).catch(() => {});
+    relayConversion("Schedule", eventId, loadContact(), { content_name: "ATO debt lending review" });
   }, []);
   return null;
 }
