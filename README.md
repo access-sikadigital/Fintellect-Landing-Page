@@ -25,6 +25,7 @@ npm run build && npm start
 
 Landing page (`/`) → calendar booking (`/book`) → thank you (`/thank-you`).
 
+- **Quiz → /enquiry-thank-you:** "Review" leads (answers that need a closer look) go to their own thank-you page. Every completed quiz fires `Lead` (pixel + CAPI) with `lead_outcome` = `good_fit` or `review`; good fits also fire custom `QualifiedLead`.
 - **Quiz → /book:** "Good fit" leads go to `/book` with name, email, phone (+61…) and the UTMs/fbclid in the URL.
 - **/book:** Robert's GoHighLevel calendar widget (`src/components/latest/BookingCalendar.tsx`), pre-filled from the quiz. GHL creates the appointment against the same contact the quiz webhook created, so bookings, workflows and attribution stay in GHL. Calendar ID: `src/lib/funnel.ts`, override with `NEXT_PUBLIC_GHL_CALENDAR_ID`.
 - **/book → /thank-you:** set by the calendar in GHL (Calendar settings → after booking → Redirect URL). It must point to `https://<site>/thank-you`.

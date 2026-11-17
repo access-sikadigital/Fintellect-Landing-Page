@@ -255,11 +255,8 @@ async function handleV3(body: Record<string, unknown>, req: NextRequest) {
     event_id: eventId,
   };
 
-  // Like the design: the Lead conversion only fires for "Good fit" answers
-  const meta =
-    outcome === "Good fit"
-      ? sendLeadToCapi({ email: email.value, phoneE164, firstName, lastName, eventId, answers: { atoDebt: LOAN_TYPE }, attribution }, req)
-      : Promise.resolve();
+  // Every completed quiz is a Lead (matches the browser pixel's Lead event)
+  const meta = sendLeadToCapi({ email: email.value, phoneE164, firstName, lastName, eventId, answers: { atoDebt: LOAN_TYPE }, attribution }, req);
 
   const webhook = process.env.LEAD_WEBHOOK_URL;
   if (!webhook) {

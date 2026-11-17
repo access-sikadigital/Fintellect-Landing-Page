@@ -1,5 +1,6 @@
 /**
  * Funnel: landing page (/) → calendar booking (/book) → thank you (/thank-you).
+ * Quiz answers that need a closer look ("Review") go to /enquiry-thank-you instead of booking.
  *
  * The calendar on /book is the GoHighLevel booking widget, so the appointment, the contact
  * and every GHL workflow and attribution report stay in GHL. After a booking, the widget sends
@@ -14,6 +15,8 @@ export const GHL_WIDGET_URL = `https://api.leadconnectorhq.com/widget/booking/${
 export const GHL_EMBED_SCRIPT = "https://link.msgsndr.com/js/form_embed.js";
 
 export const BOOK_PATH = "/book";
+/** Where "Review" leads land (answers that need a closer look before booking). */
+export const ENQUIRY_THANKS_PATH = "/enquiry-thank-you";
 
 /** Query params passed from the quiz to /book and on to the GHL widget (prefill + attribution). */
 export const PREFILL_KEYS = ["first_name", "last_name", "email", "phone"] as const;
