@@ -11,6 +11,13 @@ const nextConfig: NextConfig = {
   poweredByHeader: false,
   // Hide the dev-only "N" badge; it sat over the mobile sticky button while reviewing
   devIndicators: false,
+  // Old step URLs (before the fintellect-lp naming) keep working
+  async redirects() {
+    return [
+      { source: "/book", destination: "/calendar-booking", permanent: false },
+      { source: "/thank-you", destination: "/calendar-booking/thank-you", permanent: false },
+    ];
+  },
 };
 
 export default nextConfig;
