@@ -17,7 +17,7 @@ import {
   type Opt,
 } from "@/lib/atoQuiz";
 import { checkEmail as checkEmailShared, sanitiseName, toE164 } from "@/lib/validation";
-import { ATTRIBUTION_KEYS, BOOK_PATH, PREFILL_KEYS, saveContact } from "@/lib/funnel";
+import { ATTRIBUTION_KEYS, BOOK_PATH, ENQUIRY_THANKS_PATH, PREFILL_KEYS, saveContact } from "@/lib/funnel";
 import { attribution, newEventId, relayConversion, track, trackCustom } from "@/lib/track";
 
 /**
@@ -405,11 +405,11 @@ export function LatestQuiz() {
         const data = (await res.json().catch(() => ({}))) as { error?: string };
         throw new Error(data.error || "Something went wrong sending your details. Please try again.");
       }
-      if (outcome === "Good fit") {
-        const lead = { content_name: "ATO Debt quiz", content_category: LOAN_TYPE };
-        track("Lead", lead, eventId);
-        relayConversion("Lead", eventId, { first_name: final.first_name, last_name: final.last_name, email: final.email, phone: toE164(phone) }, lead);
-      }
+      // Every completed quiz is a Lead (pixel + CAPI relay). lead_outcome separates good fits from reviews in Meta.
+      const lead = { content_name: "ATO Debt quiz", content_category: LOAN_TYPE, lead_outcome: outcome === "Good fit" ? "good_fit" : "review" };
+      track("Lead", lead, eventId);
+      relayConversion("Lead", eventId, { first_name: final.first_name, last_name: final.last_name, email: final.email, phone: toE164(phone) }, lead);
+      if (outcome === "Good fit") trackCustom("QualifiedLead", lead);
       setA(final);
       await new Promise((r) => setTimeout(r, Math.max(0, 600 - (Date.now() - started))));
       setSending(false);
@@ -482,6 +482,12 @@ export function LatestQuiz() {
     }
   };
 
+  /** Review outcome: the lead is in GHL; send them to the enquiry thank-you page (its own URL, for tracking). */
+  const goThanks = () => {
+    saveContact({ first_name: a.first_name, last_name: a.last_name, email: a.email, phone: a.phone ? toE164(a.phone) : undefined });
+    window.top!.location.href = new URL(ENQUIRY_THANKS_PATH, window.location.origin).toString();
+  };
+
   /* ---------- calculating screen ---------- */
   const calcLines = ["Checking your answers", "Matching against 40+ lenders' criteria", `Weighing up ${LOAN_TYPE} options`, "Preparing your summary for Robert"];
   const [calcK, setCalcK] = useState(0);
@@ -494,7 +500,7 @@ export function LatestQuiz() {
       k++;
       setCalcK(k);
       if (k > calcLines.length) {
-        t = setTimeout(() => showEnd(outcomeFor(a) === "Good fit" ? "fit" : "review"), 450);
+        t = setTimeout(() => (outcomeFor(a) === "Good fit" ? showEnd("fit") : goThanks()), 450);
         return;
       }
       t = setTimeout(tick, CALC_STEP);
