@@ -28,9 +28,52 @@ export function track(event: string, params?: Record<string, unknown>, eventID?:
   dataLayerPush(event, params, eventID);
 }
 
-export function trackCustom(event: string, params?: Record<string, unknown>) {
-  fbq()?.("trackCustom", event, params ?? {});
-  dataLayerPush(event, params);
+export function trackCustom(event: string, params?: Record<string, unknown>, eventID?: string) {
+  fbq()?.("trackCustom", event, params ?? {}, eventID ? { eventID } : undefined);
+  dataLayerPush(event, params, eventID);
+}
+
+const PIXEL_ID = process.env.NEXT_PUBLIC_META_PIXEL_ID;
+const VISITOR_KEY = "ft-vid";
+const FBC_KEY = "ft-fbc";
+
+/**
+ * First-party visitor id, sent to Meta as external_id with every conversion (pixel and CAPI) so the
+ * browser and server copies tie to the same person. Created on first use and kept in localStorage.
+ */
+export function visitorId(): string | undefined {
+  try {
+    let id = localStorage.getItem(VISITOR_KEY);
+    if (!id) {
+      id = newEventId();
+      localStorage.setItem(VISITOR_KEY, id);
+    }
+    return id;
+  } catch {
+    return undefined;
+  }
+}
+
+/**
+ * Browser-side advanced matching: re-initialises the pixel with the visitor's details so the next
+ * pixel event carries them (Meta hashes them in the browser). Call just before a conversion.
+ * Meta only accepts this when the pixel was initialised without user data, so layout.tsx initialises
+ * it empty unless the quiz contact is already known (then it passes the same fields itself).
+ */
+export function matchUser(contact: { first_name?: string; last_name?: string; email?: string; phone?: string } = {}) {
+  const f = fbq();
+  if (!f || !PIXEL_ID) return;
+  const lower = (v?: string) => v?.trim().toLowerCase() || undefined;
+  const ud: Record<string, string> = {};
+  const set = (k: string, v?: string) => {
+    if (v) ud[k] = v;
+  };
+  set("em", lower(contact.email));
+  set("ph", contact.phone?.replace(/\D/g, "") || undefined);
+  set("fn", lower(contact.first_name));
+  set("ln", lower(contact.last_name?.split(/\s+/).pop()));
+  set("external_id", visitorId());
+  if (Object.keys(ud).length) f("init", PIXEL_ID, ud);
 }
 
 export function newEventId() {
@@ -59,12 +102,26 @@ export function attribution(): Record<string, string> {
   }
   const cookie = (name: string) => document.cookie.match(new RegExp(`(?:^|; )${name}=([^;]*)`))?.[1];
   const fbp = cookie("_fbp");
-  const fbc = cookie("_fbc") ?? (out.fbclid ? `fb.1.${Date.now()}.${out.fbclid}` : undefined);
+  const fbc = cookie("_fbc") ?? clickId(out.fbclid);
   if (fbp) out.fbp = fbp;
   if (fbc) out.fbc = fbc;
   out.page = window.location.href.split("#")[0];
   if (document.referrer) out.referrer = document.referrer.slice(0, 300);
   return out;
+}
+
+/** fbc built from the ad click's fbclid, kept with its first-seen time so every event sends the same value. */
+function clickId(fbclid?: string): string | undefined {
+  if (!fbclid) return undefined;
+  try {
+    const stored = localStorage.getItem(FBC_KEY);
+    if (stored && stored.endsWith(`.${fbclid}`)) return stored;
+    const fbc = `fb.1.${Date.now()}.${fbclid}`;
+    localStorage.setItem(FBC_KEY, fbc);
+    return fbc;
+  } catch {
+    return `fb.1.${Date.now()}.${fbclid}`;
+  }
 }
 
 /**
@@ -94,6 +151,7 @@ export function relayConversion(
       last_name: contact.last_name,
       fbp: a.fbp,
       fbc: a.fbc,
+      external_id: visitorId(),
       client_user_agent: navigator.userAgent,
     };
     void fetch(CAPI_RELAY, {

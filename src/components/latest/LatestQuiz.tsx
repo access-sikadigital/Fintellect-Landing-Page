@@ -18,7 +18,7 @@ import {
 } from "@/lib/atoQuiz";
 import { checkEmail as checkEmailShared, sanitiseName, toE164 } from "@/lib/validation";
 import { ATTRIBUTION_KEYS, BOOK_PATH, PREFILL_KEYS, saveContact } from "@/lib/funnel";
-import { attribution, newEventId, relayConversion, track, trackCustom } from "@/lib/track";
+import { attribution, matchUser, newEventId, relayConversion, track, trackCustom } from "@/lib/track";
 
 /**
  * The ATO debt quiz from the LATEST design, rebuilt in React with the same markup classes,
@@ -417,9 +417,15 @@ export function LatestQuiz() {
       if (!res || !res.ok) console.error("[lead] not saved, continuing to the calendar", res?.status);
       // Every completed quiz is a Lead (pixel + CAPI relay). lead_outcome separates good fits from reviews in Meta.
       const lead = { content_name: "ATO Debt quiz", content_category: LOAN_TYPE, lead_outcome: outcome === "Good fit" ? "good_fit" : "review" };
+      const contact = { first_name: final.first_name, last_name: final.last_name, email: final.email, phone: toE164(phone) };
+      matchUser(contact);
       track("Lead", lead, eventId);
-      relayConversion("Lead", eventId, { first_name: final.first_name, last_name: final.last_name, email: final.email, phone: toE164(phone) }, lead);
-      if (outcome === "Good fit") trackCustom("QualifiedLead", lead);
+      relayConversion("Lead", eventId, contact, lead);
+      if (outcome === "Good fit") {
+        const qualifiedId = newEventId();
+        trackCustom("QualifiedLead", lead, qualifiedId);
+        relayConversion("QualifiedLead", qualifiedId, contact, lead);
+      }
       setA(final);
       await new Promise((r) => setTimeout(r, Math.max(0, 600 - (Date.now() - started))));
       setSending(false);
