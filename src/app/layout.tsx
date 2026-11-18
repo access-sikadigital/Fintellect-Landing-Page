@@ -60,8 +60,10 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         )}
         {pixelId && (
           <>
+            {/* Advanced matching: once the quiz contact is in this visit's storage (booking + thank-you pages), the
+                pixel starts with it. Otherwise it starts empty so matchUser() in src/lib/track.ts can add it at Lead. */}
             <Script id="meta-pixel" strategy="afterInteractive">
-              {`!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');fbq('init','${pixelId}');fbq('track','PageView');`}
+              {`!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');var u={};try{var c=JSON.parse(sessionStorage.getItem('ft-contact')||'{}'),l=function(v){return v?String(v).trim().toLowerCase():''},i=localStorage.getItem('ft-vid');if(c.email||c.phone){if(c.email)u.em=l(c.email);if(c.phone)u.ph=String(c.phone).replace(/\\D/g,'');if(c.first_name)u.fn=l(c.first_name);if(c.last_name)u.ln=l(String(c.last_name).trim().split(/\\s+/).pop());if(i)u.external_id=i}}catch(x){}fbq('init','${pixelId}',u);fbq('track','PageView');`}
             </Script>
             <noscript>
               {/* eslint-disable-next-line @next/next/no-img-element */}
