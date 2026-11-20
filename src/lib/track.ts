@@ -23,14 +23,39 @@ function dataLayerPush(event: string, params?: Record<string, unknown>, eventID?
   }
 }
 
+/**
+ * Google Analytics 4 (direct gtag, when NEXT_PUBLIC_GA_MEASUREMENT_ID is set): funnel events are sent
+ * under GA4's recommended lead-generation names so they can be marked as key events in GA4.
+ */
+const GA4_EVENTS: Record<string, string> = {
+  Lead: "generate_lead",
+  QualifiedLead: "qualify_lead",
+  Schedule: "schedule_appointment",
+  QuizStart: "quiz_start",
+  QuizStep: "quiz_step",
+  QuizNotFit: "quiz_not_fit",
+};
+function ga4(event: string, params?: Record<string, unknown>, eventID?: string) {
+  if (typeof window === "undefined") return;
+  try {
+    const g = (window as unknown as { gtag?: (...a: unknown[]) => void }).gtag;
+    if (typeof g !== "function") return;
+    g("event", GA4_EVENTS[event] ?? event.toLowerCase(), { ...(params ?? {}), ...(eventID ? { event_id: eventID } : {}) });
+  } catch {
+    /* ignore */
+  }
+}
+
 export function track(event: string, params?: Record<string, unknown>, eventID?: string) {
   fbq()?.("track", event, params ?? {}, eventID ? { eventID } : undefined);
   dataLayerPush(event, params, eventID);
+  ga4(event, params, eventID);
 }
 
 export function trackCustom(event: string, params?: Record<string, unknown>, eventID?: string) {
   fbq()?.("trackCustom", event, params ?? {}, eventID ? { eventID } : undefined);
   dataLayerPush(event, params, eventID);
+  ga4(event, params, eventID);
 }
 
 const PIXEL_ID = process.env.NEXT_PUBLIC_META_PIXEL_ID;
