@@ -9,7 +9,8 @@ const description =
   "ATO interest compounds daily and is no longer tax-deductible. If you own property, using your equity to clear the balance could take the pressure off. Check if it fits you in about a minute.";
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"),
+  // Share images (og:image) need an absolute public URL; fall back to the live domain, never localhost
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://fintellect-lp-ato-debt.vercel.app"),
   title,
   description,
   // Paid-traffic landing page: keep it out of search results so it doesn't compete with the main site.
