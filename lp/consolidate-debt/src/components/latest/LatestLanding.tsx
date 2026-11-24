@@ -164,10 +164,9 @@ export function LatestLanding() {
       </section><section style={{ padding: "clamp(64px, 9vw, 112px) 20px", background: "#F1F4E6" }}>
         <div style={{ maxWidth: "1160px", margin: "0 auto" }}>
           <div style={{ textAlign: "center", maxWidth: "780px", margin: "0 auto 52px" }}>
-            <div style={{ fontSize: "13px", fontWeight: "700", letterSpacing: ".12em", textTransform: "uppercase", color: "#206943", marginBottom: "14px" }}>CASE STUDY</div>
+            <div style={{ fontSize: "13px", fontWeight: "700", letterSpacing: ".12em", textTransform: "uppercase", color: "#206943", marginBottom: "14px" }}>Case study</div>
             {/* PLACEHOLDER: made-up example from the copy doc, for layout only. Robert must replace it with a real,
                 de-identified Fintellect client (or remove this section) before ads run. */}
-            <div style={{ display: "inline-block", fontSize: "13px", fontWeight: "700", color: "#8A1C1C", background: "#FDECEA", border: "1px dashed #C62828", borderRadius: "10px", padding: "6px 12px", marginBottom: "16px" }}>Placeholder example, not a real client. Awaiting Robert&apos;s approval.</div>
             <h2 style={{ fontFamily: "var(--font-inter), Inter, sans-serif", fontWeight: "600", fontSize: "clamp(32px, 3.8vw, 48px)", lineHeight: "1.08", letterSpacing: "-0.02em", margin: "0" }}>How a Dandenong freight business got <em style={{ fontStyle: "normal", fontWeight: "inherit", color: "#206943" }}>off the daily debits.</em></h2>
           </div>
           <div style={{ display: "flex", flexWrap: "wrap", background: "#FFFFFF", borderRadius: "26px", overflow: "hidden", boxShadow: "0 24px 60px rgba(1,36,18,.10)", border: "1px solid #E2E6D1" }}>
@@ -200,6 +199,7 @@ export function LatestLanding() {
               </div>
               <p style={{ margin: "0 0 14px", fontSize: "16.5px" }}>A freight business had taken out four short-term loans over 18 months, each to cover the last. Daily debits were coming out before fuel and wages were paid.</p>
               <p style={{ margin: "0", fontSize: "16.5px", color: "#4b5b52" }}>We consolidated all four into one loan over five years, secured against the owner&apos;s property. One repayment a month, and more than $12,000 a month back in the business.</p>
+              <p style={{ margin: "18px 0 0", fontSize: "13px", color: "#4b5b52" }}>Illustrative example only, not a real client. All finance is subject to lender approval.</p>
             </div>
           </div>
         </div>
