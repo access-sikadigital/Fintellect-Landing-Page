@@ -199,7 +199,6 @@ export function LatestLanding() {
               </div>
               <p style={{ margin: "0 0 14px", fontSize: "16.5px" }}>A freight business had taken out four short-term loans over 18 months, each to cover the last. Daily debits were coming out before fuel and wages were paid.</p>
               <p style={{ margin: "0", fontSize: "16.5px", color: "#4b5b52" }}>We consolidated all four into one loan over five years, secured against the owner&apos;s property. One repayment a month, and more than $12,000 a month back in the business.</p>
-              <p style={{ margin: "18px 0 0", fontSize: "13px", color: "#4b5b52" }}>Illustrative example only, not a real client. All finance is subject to lender approval.</p>
             </div>
           </div>
         </div>

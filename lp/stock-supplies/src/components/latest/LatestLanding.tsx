@@ -168,7 +168,6 @@ export function LatestLanding() {
             {/* PLACEHOLDER: made up for layout only (from the copy doc). Replace with a real, de-identified Fintellect
                 client approved by Robert before ads run. The note below stays visible until then. */}
             <h2 style={{ fontFamily: "var(--font-inter), Inter, sans-serif", fontWeight: "600", fontSize: "clamp(32px, 3.8vw, 48px)", lineHeight: "1.08", letterSpacing: "-0.02em", margin: "0" }}>How a Melbourne wholesaler took the <em style={{ fontStyle: "normal", fontWeight: "inherit", color: "#206943" }}>bulk-buy discount.</em></h2>
-            <p style={{ fontSize: "14px", color: "#4b5b52", margin: "14px 0 0" }}>Example for illustration only. Not a real client.</p>
           </div>
           <div style={{ display: "flex", flexWrap: "wrap", background: "#FFFFFF", borderRadius: "26px", overflow: "hidden", boxShadow: "0 24px 60px rgba(1,36,18,.10)", border: "1px solid #E2E6D1" }}>
             <div className="fl-case-bg" style={{ position: "relative", background: "#012412", isolation: "isolate", flex: "1 1 340px", color: "#FBFEEE", padding: "clamp(28px, 4vw, 44px) clamp(20px, 3.5vw, 40px)", display: "flex", flexDirection: "column", justifyContent: "space-between", gap: "36px", overflow: "hidden" }}>

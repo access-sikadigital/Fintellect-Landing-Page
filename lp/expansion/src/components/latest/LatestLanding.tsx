@@ -198,7 +198,6 @@ export function LatestLanding() {
               <p style={{ margin: "0 0 14px", fontSize: "16.5px" }}>A busy café has found a second site, but paying for the fit-out in cash would use up nearly all its savings.</p>
               <p style={{ margin: "0", fontSize: "16.5px", color: "#4b5b52" }}>A $150,000 loan over five years covers the fit-out and equipment. The second site can open on schedule, and the owners keep $60,000 in the bank to cover the first slow months.</p>
               {/* PLACEHOLDER: made-up example from the copy doc, for layout only. Replace with a real, de-identified Fintellect client (Robert to approve) and switch the eyebrow back to "Case study" before ads run. */}
-              <p style={{ margin: "18px 0 0", fontSize: "13px", color: "#4b5b52" }}>Illustrative example only, not a real client. All finance is subject to lender approval.</p>
             </div>
           </div>
         </div>
