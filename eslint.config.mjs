@@ -12,6 +12,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Each landing page under lp/<slug>/ is its own Next app and Vercel project
+    "lp/**",
   ]),
 ]);
 
