@@ -195,7 +195,6 @@ export function LatestLanding() {
               <p style={{ margin: "0", fontSize: "16.5px", color: "#4b5b52" }}>We arranged a chattel mortgage over five years for both vehicles. The business kept its cash for wages and stock, and the new vehicles were earning from their first week.</p>
               {/* PLACEHOLDER: made-up case study from the copy doc, for layout only. Robert to replace with a real,
                   de-identified client (and remove this note) before ads run. */}
-              <p style={{ margin: "18px 0 0", paddingTop: "14px", borderTop: "1px solid #E2E6D1", fontSize: "13px", color: "#4b5b52" }}>Illustrative example only, not a real client. Your options depend on your situation and lender approval.</p>
             </div>
           </div>
         </div>

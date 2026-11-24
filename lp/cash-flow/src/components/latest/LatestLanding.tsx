@@ -194,7 +194,6 @@ export function LatestLanding() {
               </div>
               <p style={{ margin: "0 0 14px", fontSize: "16.5px" }}>A landscaping business doing work for three builders was waiting up to 60 days to get paid. Twice in one quarter, the owner covered wages from his personal account.</p>
               <p style={{ margin: "0", fontSize: "16.5px", color: "#4b5b52" }}>We set up an $80,000 business line of credit. He draws on it when invoices are outstanding and pays it down when the builders pay. He only pays interest on what he uses.</p>
-              <p style={{ margin: "18px 0 0", fontSize: "13px", color: "#4b5b52" }}>Illustrative example only, not a real client. All finance is subject to lender approval.</p>
             </div>
           </div>
         </div>
