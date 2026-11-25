@@ -134,7 +134,14 @@ export async function POST(req: NextRequest) {
     req,
   );
 
-  const webhook = process.env.LEAD_WEBHOOK_URL;
+  // Post to GHL directly when this project has the webhook URL; otherwise hand the lead to the ATO
+  // project, which holds it (see src/app/api/lead-forward in the repo root).
+  const direct = process.env.LEAD_WEBHOOK_URL;
+  const forwardUrl = process.env.LEAD_FORWARD_URL;
+  const forwardToken = process.env.LEAD_FORWARD_TOKEN;
+  const webhook = direct || (forwardUrl && forwardToken ? forwardUrl : undefined);
+  const headers: Record<string, string> = { "Content-Type": "application/json" };
+  if (!direct && forwardToken) headers["x-fl-forward-token"] = forwardToken;
   if (!webhook) {
     // No CRM connected: keep the lead in the server logs so it isn't lost.
     console.warn("[lead] LEAD_WEBHOOK_URL is not set. Lead received:", JSON.stringify(lead));
@@ -144,7 +151,7 @@ export async function POST(req: NextRequest) {
   try {
     const res = await fetch(webhook, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers,
       body: JSON.stringify(lead),
       signal: AbortSignal.timeout(10_000),
     });
