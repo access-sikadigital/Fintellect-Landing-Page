@@ -39,7 +39,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ ok: false, error: "Invalid lead." }, { status: 400 });
   }
   const l = lead as Record<string, unknown>;
-  if (typeof l.source !== "string" || !/landing page$/i.test(l.source) || (!l.email && !l.phone)) {
+  if (typeof l.source !== "string" || !l.source.trim() || (!l.email && !l.phone)) {
     return NextResponse.json({ ok: false, error: "Invalid lead." }, { status: 400 });
   }
 
