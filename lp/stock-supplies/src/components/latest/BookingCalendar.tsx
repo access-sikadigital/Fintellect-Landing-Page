@@ -3,7 +3,7 @@
 import { useEffect, useRef } from "react";
 import Script from "next/script";
 import { attribution } from "@/lib/track";
-import { ATTRIBUTION_KEYS, GHL_CALENDAR_ID, GHL_EMBED_SCRIPT, GHL_WIDGET_URL, PREFILL_KEYS } from "@/lib/funnel";
+import { ATTRIBUTION_KEYS, GHL_CALENDAR_ID, GHL_EMBED_SCRIPT, GHL_WIDGET_URL, PREFILL_KEYS, THANK_YOU_PATH } from "@/lib/funnel";
 
 /**
  * The GoHighLevel booking widget. GHL creates the appointment and matches it to the contact the
@@ -28,6 +28,21 @@ export function BookingCalendar() {
     }
     // Set once on the client (the query string only exists in the browser); form_embed.js picks the iframe up from its id
     if (frame.current) frame.current.src = u.toString();
+  }, []);
+
+  // GHL posts ["msgsndr-booking-complete", {...}] to this page just before it sends the top window to
+  // the calendar's redirect URL. That redirect is shared by every landing page (one calendar), so we
+  // navigate to *this* page's thank-you first. Our navigation is issued later, so it wins.
+  useEffect(() => {
+    let done = false;
+    const onMessage = (e: MessageEvent) => {
+      if (done || !frame.current || e.source !== frame.current.contentWindow) return;
+      if (!Array.isArray(e.data) || e.data[0] !== "msgsndr-booking-complete") return;
+      done = true;
+      window.location.href = THANK_YOU_PATH;
+    };
+    window.addEventListener("message", onMessage);
+    return () => window.removeEventListener("message", onMessage);
   }, []);
 
   return (
