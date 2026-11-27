@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import Script from "next/script";
 import { fraunces, inter } from "@/lib/fonts";
 import { SmoothScroll } from "@/components/providers/SmoothScroll";
+import { AttributionCapture } from "@/components/providers/AttributionCapture";
 import "./globals.css";
 
 const title = "Fund your next step without emptying the account | Fintellect";
@@ -50,6 +51,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
             <iframe src={`https://www.googletagmanager.com/ns.html?id=${gtmId}`} height="0" width="0" style={{ display: "none", visibility: "hidden" }} />
           </noscript>
         )}
+        <AttributionCapture />
         <SmoothScroll>{children}</SmoothScroll>
         {gtmId && (
           <Script id="gtm" strategy="afterInteractive">

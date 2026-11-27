@@ -58,7 +58,7 @@ export function LatestLanding() {
               <span style={{ background: "#C62828", color: "#FFFFFF", fontSize: "12px", fontWeight: "700", padding: "3px 9px", borderRadius: "999px" }}>Growth</span>
               New premises, more staff or a bigger contract
             </div>
-            <h1 className="fl-up fl-d1" style={{ fontFamily: "var(--font-inter), Inter, sans-serif", fontWeight: "600", fontSize: "clamp(40px, 4.6vw, 64px)", lineHeight: "1.04", letterSpacing: "-0.025em", margin: "0 0 26px" }}>Ready for the next step? Fund it <em style={{ fontStyle: "normal", fontWeight: "inherit", color: "#9FD3A8" }}>without emptying the account.</em></h1>
+            <h1 className="fl-up fl-d1" style={{ fontFamily: "var(--font-inter), Inter, sans-serif", fontWeight: "600", fontSize: "clamp(40px, 4.6vw, 64px)", lineHeight: "1.04", letterSpacing: "-0.025em", margin: "0 0 26px" }}>Grow the Business Without Draining Your Cash. <em style={{ fontStyle: "normal", fontWeight: "inherit", color: "#9FD3A8" }}>Growth Finance</em> in 4 Simple Steps.</h1>
             <p className="fl-up fl-d2" style={{ fontSize: "19px", lineHeight: "1.6", color: "#E2E6D1", margin: "0 0 36px", maxWidth: "560px" }}>A new site, more staff or a bigger contract. Growth finance lets you move now and pay it back from what the growth brings in.</p>
             <div className="fl-up fl-d3" style={{ display: "grid", gridTemplateColumns: "repeat(3, minmax(0, 1fr))", gap: "12px", maxWidth: "560px" }}>
               <div style={{ border: "1px solid #E2E6D1", borderRadius: "14px", padding: "12px 12px", background: "#FBFEEE" }}>
