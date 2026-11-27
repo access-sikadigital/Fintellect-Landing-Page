@@ -58,7 +58,7 @@ export function LatestLanding() {
               <span style={{ background: "#C62828", color: "#FFFFFF", fontSize: "12px", fontWeight: "700", padding: "3px 9px", borderRadius: "999px", whiteSpace: "nowrap" }}>Stock finance</span>
               For businesses that buy before they sell
             </div>
-            <h1 className="fl-up fl-d1" style={{ fontFamily: "var(--font-inter), Inter, sans-serif", fontWeight: "600", fontSize: "clamp(40px, 4.6vw, 64px)", lineHeight: "1.04", letterSpacing: "-0.025em", margin: "0 0 26px" }}>Say yes to the order. <em style={{ fontStyle: "normal", fontWeight: "inherit", color: "#9FD3A8" }}>Fund the stock</em> behind it.</h1>
+            <h1 className="fl-up fl-d1" style={{ fontFamily: "var(--font-inter), Inter, sans-serif", fontWeight: "600", fontSize: "clamp(40px, 4.6vw, 64px)", lineHeight: "1.04", letterSpacing: "-0.025em", margin: "0 0 26px" }}>Pay Suppliers Now and <em style={{ fontStyle: "normal", fontWeight: "inherit", color: "#9FD3A8" }}>Repay as the Stock Sells</em>. 4 Simple Steps.</h1>
             <p className="fl-up fl-d2" style={{ fontSize: "19px", lineHeight: "1.6", color: "#E2E6D1", margin: "0 0 36px", maxWidth: "560px" }}>Stock and trade finance pays your suppliers now, so you can fill the big order, stock up for the busy season or take the bulk-buy deal.</p>
             <div className="fl-up fl-d3" style={{ display: "grid", gridTemplateColumns: "repeat(3, minmax(0, 1fr))", gap: "12px", maxWidth: "560px" }}>
               <div style={{ border: "1px solid #E2E6D1", borderRadius: "14px", padding: "12px 12px", background: "#FBFEEE" }}>

@@ -57,7 +57,7 @@ export function LatestLanding() {
               <span style={{ background: "#C62828", color: "#FFFFFF", fontSize: "12px", fontWeight: "700", padding: "3px 9px", borderRadius: "999px" }}>Tip</span>
               Get finance sorted before you talk price
             </div>
-            <h1 className="fl-up fl-d1" style={{ fontFamily: "var(--font-inter), Inter, sans-serif", fontWeight: "600", fontSize: "clamp(40px, 4.6vw, 64px)", lineHeight: "1.04", letterSpacing: "-0.025em", margin: "0 0 26px" }}>The right gear <em style={{ fontStyle: "normal", fontWeight: "inherit", color: "#9FD3A8" }}>earns its keep.</em> Finance it so it pays for itself.</h1>
+            <h1 className="fl-up fl-d1" style={{ fontFamily: "var(--font-inter), Inter, sans-serif", fontWeight: "600", fontSize: "clamp(40px, 4.6vw, 64px)", lineHeight: "1.04", letterSpacing: "-0.025em", margin: "0 0 26px" }}>Finance Your Next <em style={{ fontStyle: "normal", fontWeight: "inherit", color: "#9FD3A8" }}>Ute, Truck or Machine</em> in 4 Simple Steps.</h1>
             <p className="fl-up fl-d2" style={{ fontSize: "19px", lineHeight: "1.6", color: "#E2E6D1", margin: "0 0 36px", maxWidth: "560px" }}>Utes, vans, trucks, machinery and tools. Spread the cost over its working life and keep your cash for running the business.</p>
             <div className="fl-up fl-d3" style={{ display: "grid", gridTemplateColumns: "repeat(3, minmax(0, 1fr))", gap: "12px", maxWidth: "560px" }}>
               <div style={{ border: "1px solid #E2E6D1", borderRadius: "14px", padding: "12px 12px", background: "#FBFEEE" }}>
