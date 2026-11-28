@@ -1,6 +1,6 @@
 # Fintellect — Vehicle & Equipment landing page
 
-Live: https://fintellect-lp-vehicle-equipment.vercel.app (Vercel project `fintellect-lp-vehicle-equipment`, Root Directory `lp/vehicle-equipment`).
+Live: https://fintellect-lp-asset-finance.vercel.app (Vercel project `fintellect-lp-vehicle-equipment`, Root Directory `lp/vehicle-equipment`).
 
 Self-contained Next.js app copied from the ATO Debt page (repo root), which is the template. Same design, sections,
 quiz component, tracking and funnel; only the words, the quiz questions and the theme images change.
@@ -40,7 +40,7 @@ Without `LEAD_WEBHOOK_URL` the lead is only written to the Vercel function logs.
 | Var | Status |
 | --- | --- |
 | `NEXT_PUBLIC_META_PIXEL_ID` | Set: `2584270148685362` |
-| `NEXT_PUBLIC_SITE_URL` | Set: `https://fintellect-lp-vehicle-equipment.vercel.app` |
+| `NEXT_PUBLIC_SITE_URL` | Set: `https://fintellect-lp-asset-finance.vercel.app` |
 | `LEAD_WEBHOOK_URL` | **Not set.** GHL inbound webhook (same Landing Page webhook as ATO, or a new one) |
 | `NEXT_PUBLIC_GTM_ID`, `NEXT_PUBLIC_GA_MEASUREMENT_ID`, `NEXT_PUBLIC_CLARITY_ID`, `NEXT_PUBLIC_GSC_VERIFICATION`, `NEXT_PUBLIC_BING_VERIFICATION` | Not set (accounts not created yet) |
 
