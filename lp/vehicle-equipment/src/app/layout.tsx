@@ -11,7 +11,7 @@ const description =
 
 export const metadata: Metadata = {
   // Share images (og:image) need an absolute public URL; fall back to the live domain, never localhost
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://fintellect-lp-vehicle-equipment.vercel.app"),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://fintellect-lp-asset-finance.vercel.app"),
   title,
   description,
   // Paid-traffic landing page: keep it out of search results so it doesn't compete with the main site.

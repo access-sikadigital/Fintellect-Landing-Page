@@ -11,7 +11,7 @@ project with **Root Directory** set to that folder:
 | Cash Flow | `lp/cash-flow` | fintellect-lp-cash-flow.vercel.app |
 | Expansion | `lp/expansion` | fintellect-lp-expansion.vercel.app |
 | Stock & Supplies | `lp/stock-supplies` | fintellect-lp-stock-supplies.vercel.app |
-| Vehicle & Equipment | `lp/vehicle-equipment` | fintellect-lp-vehicle-equipment.vercel.app |
+| Asset Finance (vehicle & equipment) | `lp/vehicle-equipment` | fintellect-lp-asset-finance.vercel.app (old fintellect-lp-vehicle-equipment.vercel.app still works) |
 | Consolidate Debt | `lp/consolidate-debt` | fintellect-lp-consolidate-debt.vercel.app |
 
 Funnel steps on every page: `/` (landing + quiz) → `/calendar-booking` → `/calendar-booking/thank-you`.
